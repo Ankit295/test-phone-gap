@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<head>
+  <title>Smart Attendance</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+         rel = "stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+   <script>
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+
+function getlist(){
+	$.ajax({
+		url:'/see_attendance',
+		dataType:'jsonp',
+		jsonpCallback:'populate',
+		type:'GET',
+		complete:function(data){console.log('success');}
+	});}
+	function populate(data){
+  	console.log(data);
+  	var tot=0; //attendance check
+  	var string='<table class="table table-striped"><thead><tr><th>#</th><th>Date</th><th>Attendance</th></tr></thead>';
+  var i=0;
+for (i=0;i<data.array.length;i++){
+		
+		var date= data.array[i].date;
+		console.log(date);
+		var a = data.array[i].std_reg_no.indexOf(data.registrationNo);
+if(a>=0){		
+			tot+=1;
+			string+='<tbody><tr><th scope="row">'+(i+1)+'</th><td>'+date+'</td><td>'+1+'</td></tr>';
+		}
+
+	else{
+			string+='<tbody><tr><th scope="row">'+(i+1)+'</th><td>'+date+'</td><td>'+0+'</td></tr>';
+	}
+
+    }string+='</tbody></th><td>Attendance</td><td>'+(tot*100/(i))+'%</td></tr></table>';
+
+    $('#slist').html(string);
+
+}	
+  </script>
+</head>
+<body>
+
+<div class="container" >
+  	<div class="panel-group">
+    	<div class="panel panel-default">
+      		<div class="panel-heading">
+        		<h4 class="panel-title">
+          		<a data-toggle="collapse" href="#collapse1"><h3>Give Your attendance</h3></a>
+        		</h4>
+      		</div>
+      		<div id="collapse1" class="panel-collapse collapse">
+        	<form class="form" method="post" action="/give_attendance">
+        		<div class="panel-body">
+         		<h4>Choose Date</h4>
+         		<input type="text" name="datepicker" placeholder="Date" id="datepicker"></div>
+        
+       		<div class="panel-body">
+        		<h4>Submit OTP</h4>
+        		</button> <input name="otp" placeholder="OTP" type="number">
+        		<button type="submit"  class="btn btn-primary">Submit</button>
+        		</div>
+        		</form>
+    		</div>
+		   	</div>
+		   		<div class="panel-group">
+        <div class="panel panel-default">
+         <div class="panel-heading" >
+      <a data-toggle="collapse" href="#collapse2"><h3 onclick="getlist()" >See Attendance</h3></a>
+    </div>
+
+<div id="collapse2" class="panel-collapse collapse">
+
+<div class="panel-body" id=slist></div>
+</div>
+
+      </div>
+<div class="panel-group">
+        <div class="panel panel-default">
+         <div class="panel-heading" >
+      <a href="/logout"><h3>Logout</h3></a>
+    </div>
+     </div>
+    </div>
+    </div>  
+</div>
+</body>
+</html>

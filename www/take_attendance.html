@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<head>
+  <title>Smart Attendance</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+         rel = "stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 
+
+  <script>
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+
+ function getlist(){
+    $.ajax({
+              url: "/student_list",
+              dataType: "jsonp",
+              jsonpCallback: 'populate',
+              type:'GET',
+              complete: function(data){console.log("success");}
+    });
+  }
+function populate(data){
+  console.log(data);
+  var total=0;var string='<table class="table table-striped"><thead><tr><th>#</th><th>Name</th><th>Reg No.</th></tr></thead>';
+  for (var i=0;i<data.array.length;i++){
+    string+='<tbody><tr><th scope="row">'+(i+1)+'</th><td>'+data.array[i].userName+'</td><td>'+data.array[i].registrationNo+'</td></tr>';
+  }
+    string+='</tbody></table>';
+    $('#slist').html(string);
+
+}
+
+
+  </script>
+</head>
+<body>
+
+<div class="container" >
+  <div class="container" >
+  	<div class="panel-group">
+       	<div class="panel panel-default">
+      		<div class="panel-heading">
+        		<h4 class="panel-title">
+          		<a data-toggle="collapse" href="#collapse1"><h3>Take attendance</h3></a>
+        		</h4>
+      		</div>
+     <form class="form" method="post" action="/take_attendance">
+      	<div id="collapse1" class="panel-collapse collapse">
+         <div class="panel-body">
+         		     <h4>Choose Date</h4>
+         		     <input type="text" id="datepicker" name="datepicker" key="datepicker"></div>
+        
+       		<div class="panel-body">
+        		    <h4>Set OTP</h4>
+        		    </button> <input type="number" name="otp" id="otp">
+        		    <button type="submit" class="btn btn-success">Submit</button>		
+        	</div>
+    		</div>
+		   	</div>
+	</form>
+		<div class="panel-group">
+        <div class="panel panel-default">
+         <div class="panel-heading" >
+      <a data-toggle="collapse" href="#collapse2"><h3 onclick="getlist()" >See Enrolled Students</h3></a>
+    </div>
+
+<div id="collapse2" class="panel-collapse collapse">
+<div class="panel-body" id=slist></div>
+</div>
+      </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+         <div class="panel-heading" >
+      <a href="/logout"><h3>Logout</h3></a>
+    </div>
+     </div>
+    </div>
+    </div>
+	 </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>
